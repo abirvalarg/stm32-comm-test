@@ -1,0 +1,3 @@
+-mthumb
+-Wno-main-return-type
+-std=c11
