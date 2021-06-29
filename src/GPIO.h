@@ -20,7 +20,7 @@ struct GPIO
 {
 	struct GPIO_Registers *regs;
 	volatile Word *busEnr;
-	Word enrMask;
+	Byte enrPos;
 };
 
 struct GPIO_Pin

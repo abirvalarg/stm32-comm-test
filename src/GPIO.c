@@ -4,27 +4,27 @@
 const struct GPIO GPIOA = {
 	.regs = &GPIOA_BASE,
 	.busEnr = &RCC_BASE->AHB1ENR,
-	.enrMask = 0b1
+	.enrPos = 0
 };
 
 const struct GPIO GPIOB = {
 	.regs = &GPIOB_BASE,
 	.busEnr = &RCC_BASE->AHB1ENR,
-	.enrMask = 0b10
+	.enrPos = 1
 };
 
 const struct GPIO GPIOC = {
 	.regs = &GPIOC_BASE,
 	.busEnr = &RCC_BASE->AHB1ENR,
-	.enrMask = 0b100
+	.enrPos = 2
 };
 
 void GPIO_enable(const struct GPIO *hw, bool state)
 {
 	if(state)
-		*hw->busEnr |= hw->enrMask;
+		*hw->busEnr |= (1 << hw->enrPos);
 	else
-		*hw->busEnr &= ~hw->enrMask;
+		*hw->busEnr &= ~(1 << hw->enrPos);
 }
 
 void GPIO_Pin_mode(const struct GPIO_Pin *pin, enum GPIO_PinMode mode)
