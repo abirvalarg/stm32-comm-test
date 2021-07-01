@@ -29,3 +29,4 @@ CHECK(Word, 4);
 
 #define false 0
 #define true 1
+#define NULL 0

@@ -41,7 +41,7 @@ _reset_handler:
 	b 0b
 1:
 
-	bl main
+	bl start
 0:
 	b.n 0b
 
