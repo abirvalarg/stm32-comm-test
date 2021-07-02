@@ -60,6 +60,12 @@ _default_handler:
 _TIM6_DAC_handler:
 	push {lr}
 
+	/*
+	ldr r0, =LED2
+	ldr r1, =1
+	bl GPIO_Pin_write
+	*/
+
 	ldr r0, =TIM6
 	bl _timer_handler
 
@@ -70,6 +76,12 @@ _TIM6_DAC_handler:
 .thumb_func
 _TIM7_handler:
 	push {lr}
+
+	/*
+	ldr r0, =LED2
+	ldr r1, =0
+	bl GPIO_Pin_write
+	*/
 
 	ldr r0, =TIM7
 	bl _timer_handler

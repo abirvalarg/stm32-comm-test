@@ -7,6 +7,8 @@
 void led_on(const struct Timer *_);
 void led_off(const struct Timer *_);
 
+bool check_priv();
+
 void start()
 {
 	// pos 54
@@ -53,7 +55,8 @@ void start()
 	Timer_start(&TIM6);
 
 	while(true)
-		GPIO_Pin_write(&LED2, GPIO_Pin_read(&BTN1));
+		//GPIO_Pin_write(&LED2, GPIO_Pin_read(&BTN1));
+		GPIO_Pin_write(&LED2, false);
 }
 
 void led_on(const struct Timer *_)
@@ -66,3 +69,18 @@ void led_off(const struct Timer *_)
 {
 	GPIO_Pin_write(&LED1, false);
 }
+
+/*
+void _TIM6_DAC_handler()
+{
+	Timer_start(&TIM7);
+	GPIO_Pin_write(&LED1, true);
+	Timer_reset_int(&TIM6);
+}
+
+void _TIM7_handler()
+{
+	GPIO_Pin_write(&LED1, false);
+	Timer_reset_int(&TIM7);
+}
+*/

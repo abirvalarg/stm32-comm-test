@@ -6,7 +6,7 @@ OBJCOPY=$(PREFIX)objcopy
 OBJDUMP=$(PREFIX)objdump -D
 
 CFLAGS=-c -mthumb -O2 -std=c11
-SFLAGS=-mthumb
+SFLAGS=-mthumb -mcpu=cortex-m4
 LFLAGS=-nostdlib --gc-sections
 
 OUTPUT=comm_test
