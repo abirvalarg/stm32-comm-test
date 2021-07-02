@@ -9,6 +9,8 @@
 HANDLER _reset_handler
 HANDLER _NMI_handler
 HANDLER _hardfault_handler
+HANDLER _TIM6_DAC_handler
+HANDLER _TIM7_handler
 
 .section .text
 
@@ -52,3 +54,48 @@ _reset_handler:
 _default_handler:
 	b.n _default_handler
 	nop
+
+.global _TIM6_DAC_handler
+.thumb_func
+_TIM6_DAC_handler:
+	push {lr}
+
+	ldr r0, =TIM6
+	bl _timer_handler
+
+	pop {lr}
+	bx lr
+
+.global _TIM7_handler
+.thumb_func
+_TIM7_handler:
+	push {lr}
+
+	ldr r0, =TIM7
+	bl _timer_handler
+
+	pop {lr}
+	bx lr
+
+.global _timer_handler
+.thumb_func
+.align 2
+_timer_handler:
+	push {r0, r1, r4, lr}
+
+	mov r4, r0
+	bl Timer_reset_int
+	cmp r0, 0
+	beq 0f
+	
+	ldr r1, [r4, 3 * 4]
+	ldr r1, [r1]
+	cmp r1, 0
+	beq 0f
+	mov r0, r4
+	blx r1
+
+0:
+	pop {r0, r1, r4, lr}
+	bx lr
+	nop.n

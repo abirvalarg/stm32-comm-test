@@ -22,6 +22,16 @@ struct TimerVTable
 	void (*stop)(void*);
 	Word (*config)(void*, struct TimerConfig);
 	bool (*reset)(void*);
+	void (*trigger)(void*);
+};
+
+struct Timer;
+
+typedef void (*TimerHandler)(const struct Timer*);
+
+struct TimerEtc
+{
+	TimerHandler on_update;
 };
 
 enum TimerType {Timer_Basic};
@@ -31,6 +41,7 @@ struct Timer
 	const struct TimerVTable *__vt;
 	void *hw;
 	volatile Word *busEnr;
+	struct TimerEtc *etc;
 	enum TimerType type;
 	Byte enrPos;
 };
@@ -80,5 +91,17 @@ void Timer_stop(const struct Timer *tm);
 
 /**
  * @brief check and reset pending interrupt flag
+ * @return `true` if interrupt is pending, `false` otherwise
  */
 bool Timer_reset_int(const struct Timer *tm);
+
+/**
+ * @brief trigger timer update event
+ */
+void Timer_trigger(const struct Timer *tm);
+
+/**
+ * @brief set timer update handler
+ * @return pointer to previous handler
+ */
+TimerHandler Timer_on_update(const struct Timer *tm, TimerHandler func);

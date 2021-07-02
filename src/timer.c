@@ -7,6 +7,7 @@ static void tim_bas_start(void *hw);
 static void tim_bas_stop(void *hw);
 static Word tim_bas_cfg(void *hw, struct TimerConfig cfg);
 static bool tim_bas_reset(void *hw);
+static void tim_bas_trigger(void *hw);
 
 static const struct TimerVTable basTimVT = {
 	.init = NULL,
@@ -16,21 +17,32 @@ static const struct TimerVTable basTimVT = {
 	.start = tim_bas_start,
 	.stop = tim_bas_stop,
 	.config = tim_bas_cfg,
-	.reset = tim_bas_reset
+	.reset = tim_bas_reset,
+	.trigger = tim_bas_trigger
+};
+
+static struct TimerEtc TIM6_etc = {
+	.on_update = NULL
+};
+
+static struct TimerEtc TIM7_etc = {
+	.on_update = NULL
 };
 
 const struct Timer TIM6 = {
+	.__vt = &basTimVT,
 	.hw = &TIM6_BASE,
 	.busEnr = &RCC_BASE->APB1ENR,
-	.__vt = &basTimVT,
+	.etc = &TIM6_etc,
 	.type = Timer_Basic,
 	.enrPos = 4
 };
 
 const struct Timer TIM7 = {
+	.__vt = &basTimVT,
 	.hw = &TIM7_BASE,
 	.busEnr = &RCC_BASE->APB1ENR,
-	.__vt = &basTimVT,
+	.etc = &TIM7_etc,
 	.type = Timer_Basic,
 	.enrPos = 5
 };
@@ -96,6 +108,20 @@ bool Timer_reset_int(const struct Timer *tm)
 		return false;
 }
 
+void Timer_trigger(const struct Timer *tm)
+{
+	void (*func)(void*) = tm->__vt->trigger;
+	if(func)
+		func(tm->hw);
+}
+
+TimerHandler Timer_on_update(const struct Timer *tm, TimerHandler func)
+{
+	TimerHandler old_func = tm->etc->on_update;
+	tm->etc->on_update = func;
+	return old_func;
+}
+
 static void tim_bas_set_psc(void *_hw, Word psc)
 {
 	struct BasicTimerReg *hw = _hw;
@@ -136,4 +162,10 @@ static bool tim_bas_reset(void *_hw)
 	bool res = hw->SR;
 	hw->SR = 0;
 	return res;
+}
+
+static void tim_bas_trigger(void *_hw)
+{
+	struct BasicTimerReg *hw = _hw;
+	hw->EGR = 1;
 }
